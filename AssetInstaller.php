@@ -5,6 +5,10 @@ namespace asseteer;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use Composer\Script\Event;
+use Composer\Repository\PackageRepository;
+use Composer\Package\Package;
+use Composer\Util\Filesystem;
+use Composer\Package\Dumper\ArrayDumper;
 
 class AssetInstaller
 {
@@ -16,6 +20,46 @@ class AssetInstaller
   private static $vendorOfAssetsToCopy = '';
   private static $vendorDir = '';
 
+  public static function postUpdate(Event $event)
+  {
+    $repositoryManager = $event->getComposer()->getRepositoryManager();
+    $installationManager = $event->getComposer()->getInstallationManager();
+    $fs = new Filesystem();
+    $io = $event->getIO();
+
+    $repositories = $repositoryManager->getRepositories();
+    foreach ($repositories as $repository) {
+      if ($repository instanceof PackageRepository) {
+
+        $package = $repository->getPackages()[0];
+        $extra = $package->getExtra();
+        if (array_key_exists('asseteer', $extra) && is_array($extra['asseteer'])) {
+
+
+          foreach ($extra['asseteer'] as $url) {
+            $newPackage = new Package($package->getName(), $package->getVersion(), $package->getPrettyVersion());
+            $newPackage->setType($package->getType());
+            $newPackage->setDistUrl($url);
+
+            $installationPath = $installationManager->getInstallPath($package);
+            $filename = basename($url);
+            $targetFile = $installationPath.'/'.$filename;
+            if (! file_exists($targetFile)) {
+              $io->write('  [Asseteer] Fetching URL: ' . $url);
+
+              $tmpDir = sys_get_temp_dir() . '/asseteer-' . md5($url);
+              $fs->ensureDirectoryExists($tmpDir);
+              $event->getComposer()->getDownloadManager()->getDownloader('file')->download($newPackage, $tmpDir);
+
+              $fs->rename($tmpDir . '/' . $filename, $targetFile);
+              $fs->remove($tmpDir);
+            }
+          }
+        }
+
+      }
+    }
+  }
 
   public static function postInstall(Event $event)
   {
