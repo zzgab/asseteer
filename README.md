@@ -11,7 +11,7 @@ Asseteer is a dependency for yor project, that you can invoke at "composer insta
 You pilot Asseteer from the `composer.json` file:
 
 - Declare the extenral files to download, as regular `require` dependencies.
-- Optionally define their specifics (URL to download) in the `packages` section. 
+- Optionally define their specifics (URL to download) in the `repositories` section. 
 - Then, configure the copy operations in the `extra` section.
 - Finally, invoke the `post-install-cmd` hook in `scripts` section.
 
@@ -22,8 +22,61 @@ Suppose your application uses jQuery.
 ~~~~javascript
 
   "require": {
+    "figdice/asseteer": "dev-master",
     ...
     "static-assets/jquery": "2.1.3",
+    "static-assets/bootstrap-css": "3.3.5",
+    "static-assets/bootstrap-js": "3.3.5",
     ...
+  }
+~~~~
+
+First, include `figdice/asseteer` as a dependency of your project, in order to activate the post-install hook.
+
+Then, list your static public dependencies, one by one.
+`"static-assets"` is used arbitrarily in this example. It is simply the virtual vendor folder name for your asset files, where Composer will download them.
+
+##### `repositories` section
+
+Most of the time, your remote static files (eg. the standard minified jquery) are not available as Packagist/Composer packages. You have to tell Composer to download them explicitly:
+
+~~~~javascript
+  "repositories":[
+    ...
+    {
+      "type": "package",
+      "package": {
+        "name": "static-assets/jquery",
+        "version": "2.1.3",
+        "dist": {
+          "url": "http://code.jquery.com/jquery-2.1.3.min.js",
+          "type": "file"
+        }
+      }
+    },
+    ...
+  ]
+~~~~
+
+The above directive will make Composer download the file specified in `url` property, and which will end up in the `vendor/static-assets/jquery` folder of your project.
+
+Repeat the `require` declaration and `repositories` items for each external asset dependency.
+
+##### `extra` section
+
+~~~~javascript
+  "extra": {
+    "post-install-asseteer": [
+      {
+        "vendor": "static-assets",
+        "target": "app/http/js",
+        "filters": [ "\\.js$" ]
+      },{
+        "vendor": "static-assets",
+        "target": "app/http/css",
+        "filters": [ "\\.css$" ]
+      },
+      ...
+    ]
   }
 ~~~~
