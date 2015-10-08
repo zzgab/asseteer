@@ -10,7 +10,7 @@ Asseteer is a dependency for yor project, that you can invoke at "composer insta
 ## How
 You pilot Asseteer from the `composer.json` file:
 
-- Declare the extenral files to download, as regular `require` dependencies.
+- Declare the external files to download, as regular `require` dependencies.
 - Optionally define their specifics (URL to download) in the `repositories` section. 
 - Then, configure the copy operations in the `extra` section.
 - Finally, invoke the `post-install-cmd` hook in `scripts` section.
