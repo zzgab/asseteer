@@ -1,5 +1,5 @@
 # Asseteer
-_Composer post-install hook to copy external static resources to public http location_
+_A configurable post-install Composer hook, to copy external resources to public HTTP location of your PHP project_
 
 ## Why
 Your PHP application uses external static resources (js/css/images/fonts) that are publicly available (eg. jQuery, Bootstrap etc.).
@@ -106,4 +106,43 @@ This is where you plug Asseteer as a hook in the Composer lifecycle.
 
 
 ## More
-See [exmaples](https://github.com/gabrielzerbib/asseteer/blob/master/examples/composer.json) for more a more complex scenario (download font files for different repositories, and copy them together under the same parent css public folder).
+Sometimes you need to download several files from the same package (for example, the CSS and various Font files from [Foundation Icon Font 3](http://zurb.com/playground/foundation-icon-fonts-3)).
+Currently, Composer does not support to group the files in a single Dist Package.
+
+You can use Asseteer to do the job, with the help of an `extra` property in the package definition in `repositories`:
+
+~~~~javascript
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "tradonline-assets/foundation-icons",
+        "version": "3.0.0",
+        "dist": {
+          "url": "http://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css",
+          "type": "file"
+        },
+        "extra": {
+          "asseteer": [
+            "http://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.woff",
+            "http://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.ttf"
+          ]
+        }
+      }
+    }
+  ]
+~~~~
+
+Then you need to hook the `post-update-cmd` event in the `scripts` section of `composer.json`:
+
+~~~~javascript
+  "scripts" :{
+    "post-update-cmd": [
+      "asseteer\\AssetInstaller::postUpdate"
+    ],
+    "post-install-cmd": [
+      "asseteer\\AssetInstaller::postInstall"
+    ]
+  }
+~~~~
+

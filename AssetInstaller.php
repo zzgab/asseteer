@@ -13,6 +13,7 @@ use Composer\Package\Dumper\ArrayDumper;
 class AssetInstaller
 {
   const extraKey = 'post-install-asseteer';
+  const packageExtraKey = 'asseteer';
   const vendorKey = 'vendor';
   const includeFitersKey = 'filters';
   const targetKey = 'target';
@@ -33,10 +34,10 @@ class AssetInstaller
 
         $package = $repository->getPackages()[0];
         $extra = $package->getExtra();
-        if (array_key_exists('asseteer', $extra) && is_array($extra['asseteer'])) {
+        if (array_key_exists(self::packageExtraKey, $extra) && is_array($extra[self::packageExtraKey])) {
 
 
-          foreach ($extra['asseteer'] as $url) {
+          foreach ($extra[self::packageExtraKey] as $url) {
             $newPackage = new Package($package->getName(), $package->getVersion(), $package->getPrettyVersion());
             $newPackage->setType($package->getType());
             $newPackage->setDistUrl($url);
