@@ -103,3 +103,7 @@ This is where you plug Asseteer as a hook in the Composer lifecycle.
     ]
   }
 ~~~~
+
+
+## More complex usage
+See [exmaples](https://github.com/gabrielzerbib/asseteer/blob/master/examples/composer.json) for more a more complex scenario (download font files for different repositories, and copy them together under the same parent css public folder).
