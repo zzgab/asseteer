@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "description": "Post-install resource copy script for Composer",
   "type": "library",
-  "license": "GPL-3.0+",
+  "license": ["GPL-3.0+"],
   "authors": [
     {
       "name": "Gabriel Zerbib",
       "email": "gabriel@figdice.org"
     }
   ],
-  "require": {},
+  "require": {
+    "php": ">=5.4"
+  },
   "autoload": {
     "psr-4": {
       "asseteer\\": "./"
