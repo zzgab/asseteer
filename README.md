@@ -7,7 +7,7 @@ You can use Composer to handle the static files as regular dependencies of your 
 
 Asseteer is a dependency for yor project, that you can invoke at "composer install" goal, in order to perform the file-copy operations.
 
-## Usage
+## How
 You pilot Asseteer from the `composer.json` file:
 
 - Declare the extenral files to download, as regular `require` dependencies.
@@ -16,6 +16,8 @@ You pilot Asseteer from the `composer.json` file:
 - Finally, invoke the `post-install-cmd` hook in `scripts` section.
 
 Suppose your application uses jQuery.
+
+
 
 ##### `require` section
 
@@ -35,6 +37,8 @@ First, include `figdice/asseteer` as a dependency of your project, in order to a
 
 Then, list your static public dependencies, one by one.
 `"static-assets"` is used arbitrarily in this example. It is simply the virtual vendor folder name for your asset files, where Composer will download them.
+
+
 
 ##### `repositories` section
 
@@ -62,6 +66,8 @@ The above directive will make Composer download the file specified in `url` prop
 
 Repeat the `require` declaration and `repositories` items for each external asset dependency.
 
+
+
 ##### `extra` section
 
 ~~~~javascript
@@ -77,6 +83,26 @@ Repeat the `require` declaration and `repositories` items for each external asse
         "filters": [ "\\.css$" ]
       },
       ...
+    ]
+  }
+~~~~
+
+Specify the `post-install-asseteer` extra section, which is a array of recursive filtered copy directives.
+Each item specifies:
+- a `vendor` subfolder where Composer downloaded the files, 
+- a `target` property which is your public HTTP folder where you want to make the static assets available for browsing, 
+- and a `filters` array of reg exp patterns to include in the copy.
+
+
+
+##### `scripts` section
+
+This is where you plug Asseteer as a hook in the Composer lifecycle.
+
+~~~~javascript
+  "scripts" :{
+    "post-install-cmd": [
+      "asseteer\\AssetInstaller::postInstall"
     ]
   }
 ~~~~
