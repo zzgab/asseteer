@@ -1,8 +1,10 @@
 {
   "name": "figdice/asseteer",
-  "version": "1.0.0",
-  "description": "Post-install resource copy script for Composer",
   "type": "library",
+  "description": "Post-install resource copy script for Composer",
+  "keywords": ["composer","resources","javascript","stylesheet","deploy","install"],
+  "homepage": "https://github.com/gabrielzerbib/asseteer",
+  "version": "1.0.0",
   "license": ["GPL-3.0+"],
   "authors": [
     {
