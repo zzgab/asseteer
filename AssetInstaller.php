@@ -8,7 +8,7 @@ use Composer\Script\Event;
 
 class AssetInstaller
 {
-  const extraKey = 'post-install-assets';
+  const extraKey = 'post-install-asseteer';
   const vendorKey = 'vendor';
   const includeFitersKey = 'filters';
   const targetKey = 'target';
