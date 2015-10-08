@@ -15,11 +15,10 @@ You pilot Asseteer from the `composer.json` file:
 - Then, configure the copy operations in the `extra` section.
 - Finally, invoke the `post-install-cmd` hook in `scripts` section.
 
-Suppose your application uses jQuery.
-
-
 
 ##### `require` section
+
+First, include `figdice/asseteer` as a dependency of your project, in order to activate the post-install hook.
 
 ~~~~javascript
 
@@ -33,9 +32,7 @@ Suppose your application uses jQuery.
   }
 ~~~~
 
-First, include `figdice/asseteer` as a dependency of your project, in order to activate the post-install hook.
-
-Then, list your static public dependencies, one by one.
+Now, suppose the HTML files in your application use jQuery and Bootstrap: list your static public dependencies, one by one.
 `"static-assets"` is used arbitrarily in this example. It is simply the virtual vendor folder name for your asset files, where Composer will download them.
 
 
