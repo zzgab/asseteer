@@ -8,7 +8,7 @@ use Composer\Script\Event;
 use Composer\Repository\PackageRepository;
 use Composer\Package\Package;
 use Composer\Util\Filesystem;
-use Composer\Package\Dumper\ArrayDumper;
+use Composer\IO\IOInterface;
 
 class AssetInstaller
 {
@@ -41,6 +41,7 @@ class AssetInstaller
             $newPackage = new Package($package->getName(), $package->getVersion(), $package->getPrettyVersion());
             $newPackage->setType($package->getType());
             $newPackage->setDistUrl($url);
+            $newPackage->setDistReference(sha1($url));
 
             $installationPath = $installationManager->getInstallPath($package);
             $filename = basename($url);
@@ -77,12 +78,13 @@ class AssetInstaller
 
     self::$vendorDir = $event->getComposer()->getConfig()->get('vendor-dir');
 
+    $io = $event->getIO();
     foreach ($postInstallConfig as $entry) {
-      self::performPostInstallEntry($entry);
+      self::performPostInstallEntry($entry, $io);
     }
   }
 
-  private static function performPostInstallEntry(array $entry) {
+  private static function performPostInstallEntry(array $entry, IOInterface $io) {
 
     $includeFilters = [];
     if (array_key_exists(self::includeFitersKey, $entry)) {
@@ -110,7 +112,7 @@ class AssetInstaller
       }
       foreach ($includeFilters as $filter) {
         if (preg_match('#' . $filter . '#', $name)) {
-          self::copy($name, $targetPath);
+          self::copy($name, $targetPath, $io);
           break;
         }
       }
@@ -118,7 +120,7 @@ class AssetInstaller
 
   }
 
-  private static function copy($filename, $targetPath)
+  private static function copy($filename, $targetPath, IOInterface $io)
   {
     $relativeFilename = preg_replace('#^'.self::$vendorOfAssetsToCopy.'/#', '', $filename);
 
@@ -129,7 +131,7 @@ class AssetInstaller
 
     $targetfile = $directory . '/' . basename($filename);
     if ( (! file_exists($targetfile)) || (md5_file($targetfile) != md5_file($filename)) ) {
-      echo "  [copy] $targetfile\n";
+      $io->write("  [copy] $targetfile");
       chmod($filename, 0766);
       copy($filename, $targetfile);
       chmod($targetfile, 0766);
