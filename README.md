@@ -1,5 +1,5 @@
 # Asseteer
-_Composer post-install hook to copy external static resources to public http location_
+_A configurable post-install Composer hook, to copy external resources to public HTTP location of your PHP project_
 
 ## Why
 Your PHP application uses external static resources (js/css/images/fonts) that are publicly available (eg. jQuery, Bootstrap etc.).
